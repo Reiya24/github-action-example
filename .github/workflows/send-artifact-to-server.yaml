@@ -1,0 +1,43 @@
+name: Build adn Deploy To a Server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - name: Set Node.js version from .nvmrc
+        run: echo "NODE_VERSION=$(cat .nvmrc)" >> $GITHUB_OUTPUT
+        id: nvm
+
+      - name: Use Node.js ${{ steps.nvm.outputs.NODE_VERSION }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ steps.nvm.outputs.NODE_VERSION }}
+
+      - name: cache depenencies
+        uses: 'actions/cache@v3'
+        id: cache-node-modules
+        with:
+          path: 'node_modules'
+          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
+
+      - name: npm install
+        run: npm install
+
+      - name: npm run build
+        run: |-
+          npm run build
+
+      - name: Deploy
+        uses: burnett01/rsync-deployments@6.0.0
+        with:
+          switches: -avzr --delete
+          remote_host: ${{ secrets.HOST }}
+          remote_user: ${{ secrets.USERNAME }}
+          remote_key: ${{ secrets.PRIVATE_KEY }}
+          path: 'dist/'
+          remote_path: '${{ secrets.TARGET_DIRECTORY }}'
