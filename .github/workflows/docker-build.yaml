@@ -24,7 +24,7 @@ jobs:
       - name: Save Docker Image
         run: |-
           docker save -o ./${{ github.event.repository.name }}:latest.tar ${{ github.event.repository.name }}:latest
-          ls
+          chmod 664 ${{ github.event.repository.name }}:latest.tar
 
       - name: Send Docker image to Host
         uses: appleboy/scp-action@v0.1.7
