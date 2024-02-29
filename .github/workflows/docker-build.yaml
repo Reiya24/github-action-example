@@ -19,4 +19,4 @@ jobs:
 
       - name: Build Docker image
         run: |-
-           docker build -t ${{ github.event.repository.name }}:latest
+           docker build -t ${{ github.event.repository.name }}:latest .
