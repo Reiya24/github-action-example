@@ -24,6 +24,7 @@ jobs:
       - name: Save Docker Image
         run: |-
           docker save -o ./${{ github.event.repository.name }}:latest.tar ${{ github.event.repository.name }}:latest
+          ls
 
       - name: Send Docker image to Host
         uses: appleboy/scp-action@v0.1.7
@@ -32,6 +33,6 @@ jobs:
           username: ${{ secrets.USERNAME }}
           port: 22
           key: ${{ secrets.PRIVATE_KEY }}
-          source: ./${{ github.event.repository.name }}:latest.tar
+          source: ${{ github.event.repository.name }}:latest.tar
           target: /home/elemes/temp
 
